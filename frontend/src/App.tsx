@@ -1,60 +1,79 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const App: React.FC = () => {
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [response, setResponse] = useState<any>(null);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [displayedResponse, setDisplayedResponse] = useState<string>('');
-  const [title, setTitle] = useState<string>(''); // State to hold the title
- 
+  const [displayedResponse, setDisplayedResponse] = useState<string>("");
+  const [title, setTitle] = useState<string>(""); // State to hold the title
+  const [completeStory, setCompleteStory] = useState<string>(""); // Store the complete story
+
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
+  const fakeResponse = {
+    sentiment_score: { compound: 0.8421 },
+    mira_response: {
+      result: `Title: "The Ripple Effect of Enthusiasm"
+
+      AAs you step into your office, the energy in the air feels different. It’s a Monday, but instead of the usual grogginess, you’re brimming with excitement. A new project had been announced last Friday, and over the weekend, you couldn’t help but imagine its potential. Your mind raced with ideas, and now you’re ready to bring that energy into the workplace.
+
+      Your colleague Sarah, stationed at the desk beside yours, notices your beaming smile before you’ve even set down your coffee. "What’s got you so energized this early?" she asks, her tone half-teasing but laced with curiosity.
+
+      You take a deep breath and dive in, sharing your optimism about the project. You paint a vivid picture of its possibilities—how it could streamline processes, improve customer satisfaction, and even open doors to new market opportunities. Sarah listens intently, her eyes lighting up as your enthusiasm takes hold.
+
+      Soon, what started as a spark of positivity grows into a team-wide movement. A ripple effect of creativity and progress spreads across your office.
+
+      And just like that, a single moment of enthusiasm turned into a day of breakthroughs and new possibilities.`,
+    },
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
-    try {
-   
-      const res = await axios.post('https://mira-sdk-flask-server.onrender.com/analyze', {
-        message: message,
-      });
-      setResponse(res.data);
-      setError('');
-      setDisplayedResponse(''); 
+    setDisplayedResponse(""); // Reset displayed response
+    setCompleteStory(""); // Reset complete story
 
-   
-      const resultText = res.data.mira_response.result;
-      const titleMatch = resultText.match(/Title: "(.*?)"/);
-      if (titleMatch) {
-        setTitle(titleMatch[1]); 
-        const storyWithoutTitle = resultText.replace(/Title: "(.*?)"/, '').trim();
-        setDisplayedResponse(storyWithoutTitle); // Update the response to only display the story
-      }
+    try {
+      // Simulating API call
+      setTimeout(() => {
+        setResponse(fakeResponse);
+        setError("");
+
+        const resultText = fakeResponse.mira_response.result;
+        const titleMatch = resultText.match(/Title: "(.*?)"/);
+        if (titleMatch) {
+          setTitle(titleMatch[1]); // Extract and set the title
+        }
+        const storyWithoutTitle = resultText.replace(/Title: "(.*?)"/, "").trim();
+        setCompleteStory(storyWithoutTitle); // Store the full story for typing effect
+        setLoading(false);
+      }, 2000);
     } catch (err) {
-      setError('An error occurred while processing the message.');
+      setError("An error occurred while processing the message.");
       setResponse(null);
-      setDisplayedResponse('');
     } finally {
       setLoading(false);
     }
   };
 
-  // Typing effect for story response
+  // Typing effect for the story response
   useEffect(() => {
-    if (displayedResponse) {
+    if (completeStory) {
       let idx = 0;
-      const text = displayedResponse;
       const interval = setInterval(() => {
-        setDisplayedResponse((prev) => prev + text[idx]);
+        setDisplayedResponse((prev) => prev + completeStory[idx]);
         idx += 1;
-        if (idx === text.length) {
-          clearInterval(interval); // Stop when the text is fully displayed
+        if (idx === completeStory.length) {
+          clearInterval(interval); // Stop the interval when the full text is displayed
         }
       }, 50); // Typing speed (in ms)
+
+      return () => clearInterval(interval); // Cleanup the interval on component unmount
     }
-  }, [displayedResponse]);
+  }, [completeStory]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-black text-white p-8">
@@ -92,10 +111,8 @@ const App: React.FC = () => {
           </div>
 
           <div className="mb-4">
-            
-        
             {title && <p className="font-bold text-xl mb-4">{title}</p>}
-            <p className="text-lg">{displayedResponse}</p> 
+            <p className="text-lg">{displayedResponse}</p> {/* Display the typing effect */}
           </div>
         </div>
       )}
