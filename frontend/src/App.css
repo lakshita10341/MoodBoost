@@ -1,0 +1,58 @@
+/* src/App.css */
+@import "tailwindcss";
+/* src/App.css */
+@keyframes gradient-text {
+  0% {
+    background-position: 200% center;
+  }
+  50% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-gradient-text {
+  background: linear-gradient(45deg, #ff7a18, #af002d, #320a51);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-text 3s ease-in-out infinite;
+}
+
+/* .App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+input {
+  padding: 10px;
+  margin: 10px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+p {
+  color: #555;
+  font-size: 18px;
+} */
